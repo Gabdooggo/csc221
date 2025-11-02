@@ -34,14 +34,15 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
     //bool shiftHeld = (flags & kCGEventFlagMaskShift) != 0;
    // if (!shiftHeld) return e;
 
-    if(type == kCGEventKeyDown && key == 14 && !eKey)
+    if(type == kCGEventKeyDown && key == 29 && !eKey)
     {
         eKey = true;
         std::cout << "The full function is now working.\n";
         return e;
+        // click 0 for the full function to work and to disable it.
     }
 
-    if(type == kCGEventKeyDown && key == 14 && eKey)
+    if(type == kCGEventKeyDown && key == 29 && eKey)
     {
         eKey = false;
         std::cout << "The full function ceased.\n";
