@@ -4,10 +4,13 @@
 #include <cstdlib>
 #include <string>
 #include <cmath>
+#include <chrono>
+#include <thread>
 
 
-bool clicker = false;
-int counter = 0;
+static bool command = false;
+static bool clicker = false;
+static int counter = 0;
 CGEventMask mask = 0;
 static CFMachPortRef g_eventTap = nullptr;
 
@@ -51,8 +54,8 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
     {
         clicker = true;
         std::cout << "Autoclicker is on\n";
-        return e;
         // click 9 for the full function to work and to disable it.
+        return e; //passes the event through
     }
 
     if(type == kCGEventKeyDown && key == 25 && clicker)
@@ -67,8 +70,6 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
         clickMouse(false); //left click
         // pressKey(29); //press 0
         counter += 1;
-        return e;
-
     }
 
     if(counter >= 100)
@@ -78,15 +79,18 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
         std::cout << "Auto clicker is off\n";
     }
 
+
+
 return e;
 
 }
 int main()
 {
-    mask |= CGEventMaskBit(kCGEventKeyDown);
+   mask |= CGEventMaskBit(kCGEventKeyDown) |
+    kCGEventMaskForAllEvents;
 
      g_eventTap = CGEventTapCreate(kCGSessionEventTap,
-                                  kCGHeadInsertEventTap,
+                                 kCGHeadInsertEventTap,
                                   kCGEventTapOptionDefault,
                                   mask,
                                   eventCallback,
