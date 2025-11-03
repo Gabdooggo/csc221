@@ -23,6 +23,15 @@ static void openTarget() {
     std::system(cmd.c_str());
 }
 
+static void pressKey(CGKeyCode keycode) {
+    CGEventRef keyDown = CGEventCreateKeyboardEvent(nullptr, keycode, true);
+    CGEventRef keyUp   = CGEventCreateKeyboardEvent(nullptr, keycode, false);
+    CGEventPost(kCGHIDEventTap, keyDown);
+    CGEventPost(kCGHIDEventTap, keyUp);
+    CFRelease(keyDown);
+    CFRelease(keyUp);
+}
+
 static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e, void*) {
     CGKeyCode key = (CGKeyCode)CGEventGetIntegerValueField(e, kCGKeyboardEventKeycode);
     if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {

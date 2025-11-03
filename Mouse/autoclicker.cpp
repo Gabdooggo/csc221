@@ -1,6 +1,108 @@
 #include <iostream>
+#include <ApplicationServices/ApplicationServices.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <cstdlib>
+#include <string>
+#include <cmath>
 
+
+bool clicker = false;
+int counter = 0;
+CGEventMask mask = 0;
+static CFMachPortRef g_eventTap = nullptr;
+
+static void clickMouse(bool right = false) {
+    // Get current mouse position
+    CGEventRef event = CGEventCreate(nullptr);
+    CGPoint pos = CGEventGetLocation(event);
+    CFRelease(event);
+
+    CGMouseButton btn = right ? kCGMouseButtonRight : kCGMouseButtonLeft;
+    CGEventType down = right ? kCGEventRightMouseDown : kCGEventLeftMouseDown;
+    CGEventType up   = right ? kCGEventRightMouseUp   : kCGEventLeftMouseUp;
+
+    CGEventRef clickDown = CGEventCreateMouseEvent(nullptr, down, pos, btn);
+    CGEventRef clickUp   = CGEventCreateMouseEvent(nullptr, up, pos, btn);
+
+    CGEventPost(kCGHIDEventTap, clickDown);
+    CGEventPost(kCGHIDEventTap, clickUp);
+
+    CFRelease(clickDown);
+    CFRelease(clickUp);
+}
+
+static void pressKey(CGKeyCode keycode) {
+    CGEventRef keyDown = CGEventCreateKeyboardEvent(nullptr, keycode, true);
+    CGEventRef keyUp   = CGEventCreateKeyboardEvent(nullptr, keycode, false);
+    CGEventPost(kCGHIDEventTap, keyDown);
+    CGEventPost(kCGHIDEventTap, keyUp);
+    CFRelease(keyDown);
+    CFRelease(keyUp);
+}
+
+static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e, void*) 
+{
+    CGKeyCode key = (CGKeyCode)CGEventGetIntegerValueField(e, kCGKeyboardEventKeycode);
+    if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {
+        return e;
+    }
+
+     if(type == kCGEventKeyDown && key == 25 && !clicker)
+    {
+        clicker = true;
+        std::cout << "Autoclicker is on\n";
+        return e;
+        // click 9 for the full function to work and to disable it.
+    }
+
+    if(type == kCGEventKeyDown && key == 25 && clicker)
+    {
+        clicker = false;
+        return e;
+    }
+
+     while(clicker && counter <= 100)
+    {
+        // clickMouse(true) right click
+        clickMouse(false); //left click
+        // pressKey(29); //press 0
+        counter += 1;
+        return e;
+
+    }
+
+    if(counter >= 100)
+    {
+        clicker = false;
+        counter = 0;
+        std::cout << "Auto clicker is off\n";
+    }
+
+return e;
+
+}
 int main()
 {
-    
+    mask |= CGEventMaskBit(kCGEventKeyDown);
+
+     g_eventTap = CGEventTapCreate(kCGSessionEventTap,
+                                  kCGHeadInsertEventTap,
+                                  kCGEventTapOptionDefault,
+                                  mask,
+                                  eventCallback,
+                                  nullptr);
+    if (!g_eventTap) return 1;
+
+CFRunLoopSourceRef src = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, g_eventTap, 0);
+
+// Add it to the current run loop
+CFRunLoopAddSource(CFRunLoopGetCurrent(), src, kCFRunLoopCommonModes);
+
+// Enable the tap
+CGEventTapEnable(g_eventTap, true);
+
+// Start the run loop — keeps your callback alive
+CFRunLoopRun();
+
+    return 0;
 }
