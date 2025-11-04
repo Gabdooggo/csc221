@@ -34,6 +34,13 @@ static void clickMouse(bool right = false) {
     CFRelease(clickUp);
 }
 
+static void moveMouseTo(double x, double y) {
+    CGPoint p = CGPointMake(x, y);                 // screen coords: origin = top-left of main display
+    CGEventRef move = CGEventCreateMouseEvent(nullptr, kCGEventMouseMoved, p, kCGMouseButtonLeft);
+    CGEventPost(kCGHIDEventTap, move);
+    CFRelease(move);
+}
+
 static void pressKey(CGKeyCode keycode) {
     CGEventRef keyDown = CGEventCreateKeyboardEvent(nullptr, keycode, true);
     CGEventRef keyUp   = CGEventCreateKeyboardEvent(nullptr, keycode, false);
@@ -66,10 +73,12 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
 
      while(clicker && counter <= 100)
     {
-        // clickMouse(true) right click
+        //clickMouse(true); //right click
         clickMouse(false); //left click
-        // pressKey(29); //press 0
+        //pressKey(29); //press 0
         counter += 1;
+        //moveMouseTo(1248.52, 194.191); //This will actually move your mouse which is bad
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // update every 100ms
     }
 
     if(counter >= 100)
