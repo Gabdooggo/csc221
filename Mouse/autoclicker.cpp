@@ -68,10 +68,12 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
     if(type == kCGEventKeyDown && key == 25 && clicker)
     {
         clicker = false;
+        counter = 0;
+        std::cout << "Autoclicker is off\n";
         return e;
     }
 
-     while(clicker && counter <= 100)
+     if(clicker && counter <= 100)
     {
         //clickMouse(true); //right click
         clickMouse(false); //left click
