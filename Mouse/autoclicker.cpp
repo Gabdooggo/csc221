@@ -8,7 +8,7 @@
 #include <thread>
 
 
-static bool command = false;
+static bool command = true;
 static bool clicker = false;
 static int counter = 0;
 CGEventMask mask = 0;
@@ -71,14 +71,21 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
         return e;
     }
 
-     while(clicker && counter <= 100)
+     while(clicker && counter <= 100 && !CGEventSourceKeyState(kCGEventSourceStateHIDSystemState, 25))
     {
         //clickMouse(true); //right click
         clickMouse(false); //left click
         //pressKey(29); //press 0
         counter += 1;
+        command = false;
         //moveMouseTo(1248.52, 194.191); //This will actually move your mouse which is bad
         std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // update every 100ms
+    }
+    if(!command){
+        clicker = false;
+        counter = 0;
+        command = true;
+        std::cout << "Auto clicker is off\n";
     }
 
     if(counter >= 100)
