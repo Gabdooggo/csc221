@@ -13,6 +13,7 @@ static bool clicker = false;
 static int counter = 0;
 CGEventMask mask = 0;
 static CFMachPortRef g_eventTap = nullptr;
+int cperms = 1000; // clicks per milisecond
 
 static void clickMouse(bool right = false) {
     // Get current mouse position
@@ -73,6 +74,12 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
         return e;
     }
 
+    if(type == kCGEventKeyDown && key == 29)
+    {
+        std::cout << "Enter clicks per second (milliseconds between clicks. Interger Only): ";
+        std::cin >> cperms;
+    }
+
      if(clicker && counter <= 100)
     {
         //clickMouse(true); //right click
@@ -80,7 +87,7 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
         //pressKey(29); //press 0
         counter += 1;
         //moveMouseTo(1248.52, 194.191); //This will actually move your mouse which is bad
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // update every 100ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(cperms)); // update every 100ms
     }
 
     if(counter >= 100)
@@ -97,6 +104,11 @@ return e;
 }
 int main()
 {
+    std::cout << "press '0' to set the amount of clicks per time (Deafults is 1/s))\n";
+    std::cout << "hint: lower the number for faster clicks.\n";
+    std::cout << "Press '9' to toggle code on/off.\n";
+
+
    mask |= CGEventMaskBit(kCGEventKeyDown) |
     kCGEventMaskForAllEvents;
 
