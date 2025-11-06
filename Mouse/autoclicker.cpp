@@ -120,10 +120,6 @@ int main()
                                   nullptr);
     if (!g_eventTap) return 1;
 
-while(clicker)
-{
-    eventCallback(nullptr, kCGEventKeyDown, nullptr, nullptr);
-}
 CFRunLoopSourceRef src = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, g_eventTap, 0);
 
 // Add it to the current run loop
