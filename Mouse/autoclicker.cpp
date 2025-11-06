@@ -8,7 +8,7 @@
 #include <thread>
 
 
-static bool command = false;
+static bool command = true;
 static bool clicker = false;
 static int counter = 0;
 CGEventMask mask = 0;
@@ -74,18 +74,13 @@ static CGEventRef eventCallback(CGEventTapProxy, CGEventType type, CGEventRef e,
         return e;
     }
 
-    if(type == kCGEventKeyDown && key == 29)
-    {
-        std::cout << "Enter clicks per second (milliseconds between clicks. Interger Only): ";
-        std::cin >> cperms;
-    }
-
      if(clicker && counter <= 100)
     {
         //clickMouse(true); //right click
         clickMouse(false); //left click
         //pressKey(29); //press 0
         counter += 1;
+        command = false;
         //moveMouseTo(1248.52, 194.191); //This will actually move your mouse which is bad
         std::this_thread::sleep_for(std::chrono::milliseconds(cperms)); // update every 100ms
     }
