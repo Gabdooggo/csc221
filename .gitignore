@@ -1,0 +1,20 @@
+# Ignore build directories
+build/
+bin/
+
+
+# Ignore common executable extensions
+*.exe
+*.out
+*.obj
+*.lib
+*.dll
+*.so
+
+# Ignore temporary files and IDE-specific files
+*.tmp
+*.log
+.vs/
+.vscode/
+*.user
+*.suo

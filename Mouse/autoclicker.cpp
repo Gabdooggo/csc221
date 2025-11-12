@@ -103,8 +103,8 @@ int main()
     std::cout << "hint: lower the number for faster clicks.\n";
     std::cout << "Press '9' to toggle code on/off.\n";
 
-
-   mask |= CGEventMaskBit(kCGEventKeyDown) |
+    
+    mask |= CGEventMaskBit(kCGEventKeyDown) |
     kCGEventMaskForAllEvents;
 
      g_eventTap = CGEventTapCreate(kCGSessionEventTap,
